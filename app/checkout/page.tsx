@@ -9,8 +9,11 @@ export default function CheckoutPage() {
   const { placeOrder } = useOrders();
   const router = useRouter();
 
+  // 🔥 Replace this with your real logged-in user email
+  const userEmail = "test@example.com";
+
   const handlePlaceOrder = () => {
-    placeOrder(cartItems);
+    placeOrder(cartItems, userEmail); // ✅ pass second argument
     clearCart();
     router.push("/orders");
   };
