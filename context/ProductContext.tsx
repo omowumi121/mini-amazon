@@ -1,21 +1,121 @@
 "use client";
 
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 import { Product } from "@/types/product";
-import { products as productsData } from "@/data/products";
 
 interface ProductContextType {
   products: Product[];
+  setProducts: React.Dispatch<React.SetStateAction<Product[]>>;
+  addProduct: (product: Product) => void;
+  updateProduct: (updated: Product) => void;
+  deleteProduct: (id: string) => void;
 }
 
 const ProductContext = createContext<ProductContextType>({
   products: [],
+  setProducts: () => {},
+  addProduct: () => {},
+  updateProduct: () => {},
+  deleteProduct: () => {},
 });
 
-export const ProductProvider = ({ children }: { children: ReactNode }) => (
-  <ProductContext.Provider value={{ products: productsData }}>
-    {children}
-  </ProductContext.Provider>
-);
+export const ProductProvider = ({ children }: { children: ReactNode }) => {
+  const [products, setProducts] = useState<Product[]>([
+   {
+    id: "1",
+    title: "Wireless Headphones",
+    description: "High quality noise cancelling headphones",
+    price: 120,
+    image: "/images/headphone.jpg",
+    category: "Electronics",
+    rating: 4.5,
+  },
+  {
+    id: "2",
+    title: "Smart Watch",
+    description: "Track fitness and notifications",
+    price: 90,
+    image: "/images/smartwatch.jpg",
+    category: "Electronics",
+    rating: 4.2,
+  },
+  {
+    id: "3",
+    title: "Gym wears",
+    description: "free and comfortable for exercise",
+    price: 120,
+    image: "/images/gymwears.jpg",
+    category: "gym",
+    rating: 4.5,
+  },
+  {
+    id: "4",
+    title: "Cargo pants",
+    description: "hight quality cargo pant for woman korea fashion casual",
+    price: 140,
+    image: "/images/Cargo pants.jpg",
+    category: "baggy trouser",
+    rating: 4.2,
+  },
+  {
+    id: "5",
+    title: "Unisex sneaker",
+    description: "casual fashion shoe-sneakers Amary nigeria",
+    price: 90,
+    image: "/images/sneaker.jpg",
+    category: "sneakers",
+    rating: 3.2,
+  },
+  {
+    id: "6",
+    title: "non-stick pot set",
+    description: "Generic non-stick cooker weave set, 5 cooking set and 1 fry pan",
+    price: 130,
+    image: "/images/potset.jpg",
+    category: "pots",
+    rating: 3.4,
+  },
+  {
+    id: "7",
+    title: "travel suitcase",
+    description: "24 inches PVC 2 piece Travel suitcase set",
+    price: 140,
+    image: "/images/travelbox.jpg",
+    category: "travel bag",
+    rating: 4.2,
+  },
+  {
+    id: "8",
+    title: "Air condition",
+    description: "SPLIT AC 1HP SPEED",
+    price: 220,
+    image: "/images/Ac.jpg",
+    category: "Air Conditiona",
+    rating: 4.2,
+  },
+  ]);
+
+  const addProduct = (product: Product) => {
+    setProducts((prev) => [...prev, product]);
+  };
+
+  const updateProduct = (updated: Product) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === updated.id ? updated : p))
+    );
+  };
+
+  const deleteProduct = (id: string) => {
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+  };
+
+  return (
+    <ProductContext.Provider
+      value={{ products, setProducts, addProduct, updateProduct, deleteProduct }}
+    >
+      {children}
+    </ProductContext.Provider>
+  );
+};
 
 export const useProducts = () => useContext(ProductContext);
