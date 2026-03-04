@@ -1,10 +1,28 @@
 "use client";
 
-export default function AdminHome() {
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+
+export default function AdminPage() {
+  const { user } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!user || !user.isAdmin) {
+      router.push("/");
+    }
+  }, [user, router]);
+
+  // Optional: prevent flash before redirect
+  if (!user || !user.isAdmin) {
+    return null;
+  }
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-      <p>Welcome, Admin! You can manage products and orders from the sidebar.</p>
+    <div className="p-8">
+      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
+      <p>Welcome Admin 👑</p>
     </div>
   );
 }
