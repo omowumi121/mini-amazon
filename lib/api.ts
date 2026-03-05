@@ -32,9 +32,6 @@ export const registerUser = (email: string, password: string) =>
 export const loginUser = (email: string, password: string) =>
   request("/login", "POST", { email, password });
 
-/* ========================= */
-/* PRODUCTS */
-/* ========================= */
 
 export const getProducts = () => request("/products");
 

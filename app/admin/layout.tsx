@@ -9,7 +9,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <AdminProtectedRoute>
       <div className="min-h-screen flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-black text-white p-6">
+        <aside className="w-64 bg-gray-500 text-white p-6">
           <h2 className="text-xl font-bold mb-6">Admin Dashboard</h2>
           <nav className="flex flex-col gap-4">
             <Link href="/admin" className="hover:text-orange-500">Dashboard</Link>
@@ -19,7 +19,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 p-8 bg-gray-100">{children}</main>
+        <main className="flex-1 p-8 bg-black text-white">{children}</main>
       </div>
     </AdminProtectedRoute>
   );
