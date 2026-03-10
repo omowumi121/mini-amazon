@@ -29,10 +29,10 @@ export default function ProductCard({ product }: ProductCardProps) {
   return (
     <motion.div
       whileHover={{ scale: 1.03 }}
-      className="border rounded-xl p-4 flex flex-col bg-white shadow-sm hover:shadow-md transition"
+      className="border rounded-xl p-3  flex flex-col bg-white shadow-sm hover:shadow-md transition"
     >
       {/* Image */}
-      <div className="w-full h-48 mb-4 flex items-center justify-center overflow-hidden">
+      <div className="w-full h-36 mb-3 flex items-center justify-center overflow-hidden">
         <img
           src={product.image}
           alt={product.title}

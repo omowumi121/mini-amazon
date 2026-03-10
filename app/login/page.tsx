@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext"; // Use AuthContext
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth(); // Auth hook
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,65 +16,47 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!email || !password) {
+      setError("Please fill in all fields");
+      return;
+    }
+
     setError("");
     setLoading(true);
 
     try {
-      const res = await fetch(
-        "https://go-ecommerce-d46r.onrender.com/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
-        }
-      );
+      // Call AuthContext login → backend /login
+      const success = await login(email.trim(), password.trim());
 
-      const data = await res.json();
-
-      console.log("LOGIN RESPONSE:", data);
-
-      if (!res.ok) {
-        setError(data.message || "Invalid credentials");
-        setLoading(false);
-        return;
+      if (success) {
+        router.push("/"); // redirect after login
+      } else {
+        setError("Invalid email or password");
       }
-
-      // Save user locally
-      localStorage.setItem("user", JSON.stringify(data));
-
-      setLoading(false);
-
-      // redirect
-      router.push("/");
-
-    } catch (err) {
-      console.error(err);
-      setError("Server error. Try again.");
+    } catch (err: any) {
+      console.error("Login failed:", err);
+      setError(err.message || "Server error. Try again.");
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-50">
+    <div className="flex justify-center items-center min-h-screen bg-gray-50">
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm p-6 border rounded-md shadow-md flex flex-col gap-4 bg-white"
+        className="w-full max-w-sm p-6 bg-white border rounded-lg shadow-md flex flex-col gap-4"
       >
-        <h1 className="text-2xl font-bold text-center mb-4">Login</h1>
+        <h1 className="text-2xl font-bold text-center">Login</h1>
 
-        {error && <p className="text-red-500">{error}</p>}
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border px-3 py-2 rounded"
+          className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
           required
         />
 
@@ -81,7 +65,7 @@ export default function LoginPage() {
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border px-3 py-2 rounded"
+          className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
           required
         />
 

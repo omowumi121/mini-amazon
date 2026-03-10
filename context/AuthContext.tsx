@@ -1,19 +1,17 @@
 "use client";
 
 import { createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { loginUser, registerUser } from "@/lib/api";
+import { loginUser } from "@/lib/auth";
 
 interface User {
   email: string;
-  isAdmin: boolean;
-  token?: string;
+  token: string;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
 }
 
@@ -21,7 +19,6 @@ const AuthContext = createContext<AuthContextType>({
   user: null,
   loading: true,
   login: async () => false,
-  register: async () => false,
   logout: () => {},
 });
 
@@ -29,73 +26,43 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  /* ========================= */
-  /* Persist User On Reload    */
-  /* ========================= */
+  // Persist user on reload
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
+    const stored = localStorage.getItem("user");
+    if (stored) {
+      setUser(JSON.parse(stored));
     }
     setLoading(false);
   }, []);
 
-  /* ========================= */
-  /* LOGIN                     */
-  /* ========================= */
+  // Login function using Swagger
   const login = async (email: string, password: string) => {
     try {
-      const data = await loginUser(email, password);
+      const data = await loginUser(email.trim(), password.trim());
 
-      const newUser: User = {
-        email: data.email,
-        isAdmin: data.email === "admin@mini.com",
+      const loggedInUser: User = {
+        email,
         token: data.token,
       };
 
-      setUser(newUser);
-      localStorage.setItem("user", JSON.stringify(newUser));
+      setUser(loggedInUser);
+      localStorage.setItem("user", JSON.stringify(loggedInUser));
 
       return true;
-    } catch (error) {
-      console.error("Login failed:", error);
+    } catch (err) {
+      console.error("Login failed:", err);
       return false;
     }
   };
 
-  /* ========================= */
-  /* REGISTER                  */
-  /* ========================= */
-  const register = async (email: string, password: string) => {
-    try {
-      const data = await registerUser(email, password);
-
-      const newUser: User = {
-        email: data.email,
-        isAdmin: false,
-        token: data.token,
-      };
-
-      setUser(newUser);
-      localStorage.setItem("user", JSON.stringify(newUser));
-
-      return true;
-    } catch (error) {
-      console.error("Register failed:", error);
-      return false;
-    }
-  };
-
-  /* ========================= */
-  /* LOGOUT                    */
-  /* ========================= */
+  // Logout function
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
