@@ -1,22 +1,23 @@
-import axios from "axios"
+// ✅ Use 'export' before 'async function'
+export interface AuthResponse {
+  message: string;
+  token?: string; 
+}
 
-const api = axios.create({
-  baseURL: "http://localhost:8080",
-  headers: {
-    "Content-Type": "application/json",
-  },
-})
 
-api.interceptors.request.use((config) => {
-  if (typeof window !== "undefined") {
-    const token = localStorage.getItem("token")
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-  }
+export async function apiRequest<T>(endpoint: string, options: RequestInit): Promise<T> {
+  const BASE_URL = "https://go-ecommerce-d46r.onrender.com";
+  
+  const res = await fetch(`${BASE_URL}${endpoint}`, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      ...options.headers,
+    },
+  });
 
-  return config
-})
-
-export default api
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || "Something went wrong");
+  return data;
+}
