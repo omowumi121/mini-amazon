@@ -11,21 +11,21 @@ type Product = {
 const products: Product[] = [
   {
     id: 1,
-    title: "Wireless Bluetooth Headphones",
+    title: "beauty cosmetics",
     price: 12000,
     oldPrice: 18000,
     img: "/topsales1.jpg",
   },
   {
     id: 2,
-    title: "Rechargeable Mini Fan",
+    title: "oraimo power bank",
     price: 8500,
     oldPrice: 12000,
     img: "/topsales2.jpg",
   },
   {
     id: 3,
-    title: "Smart Watch Series 9",
+    title: "sliver crease",
     price: 45000,
     oldPrice: 60000,
     img: "/topsales3.jpg",

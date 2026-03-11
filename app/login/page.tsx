@@ -1,82 +1,66 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext"; // Use AuthContext
+import { useState } from "react"
+import { loginUser } from "@/lib/auth"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/AuthContext"
 
 export default function LoginPage() {
-  const router = useRouter();
-  const { login } = useAuth(); // Auth hook
+  const router = useRouter()
+  const { login } = useAuth()
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!email || !password) {
-      setError("Please fill in all fields");
-      return;
-    }
-
-    setError("");
-    setLoading(true);
+    e.preventDefault()
 
     try {
-      // Call AuthContext login → backend /login
-      const success = await login(email.trim(), password.trim());
+      const data = await loginUser({ email, password })
 
-      if (success) {
-        router.push("/"); // redirect after login
-      } else {
-        setError("Invalid email or password");
-      }
+      login(data.token) // ✅ use context
+
+      router.push("/")
     } catch (err: any) {
-      console.error("Login failed:", err);
-      setError(err.message || "Server error. Try again.");
-    } finally {
-      setLoading(false);
+      setError(err.response?.data?.error || "Login failed")
     }
-  };
+  }
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
+    <div className="flex justify-center items-center h-screen">
+
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-sm p-6 bg-white border rounded-lg shadow-md flex flex-col gap-4"
+        className="bg-white p-8 rounded shadow w-96"
       >
-        <h1 className="text-2xl font-bold text-center">Login</h1>
+        <h1 className="text-2xl font-bold mb-4">Login</h1>
 
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        {error && (
+          <p className="text-red-500 text-sm mb-2">{error}</p>
+        )}
 
         <input
           type="email"
           placeholder="Email"
+          className="border w-full p-2 mb-3"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
-          required
         />
 
         <input
           type="password"
           placeholder="Password"
+          className="border w-full p-2 mb-3"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="border px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
-          required
         />
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-orange-500 text-white py-2 rounded hover:bg-orange-600 transition"
-        >
-          {loading ? "Logging in..." : "Login"}
+        <button className="bg-orange-500 text-white w-full py-2 rounded">
+          Login
         </button>
+
       </form>
     </div>
-  );
+  )
 }

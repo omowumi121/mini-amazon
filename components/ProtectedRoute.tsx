@@ -1,20 +1,20 @@
-"use client";
+"use client"
 
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { ReactNode, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext"
+import { useRouter } from "next/navigation"
+import { ReactNode, useEffect } from "react"
 
 export default function ProtectedRoute({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
-  const router = useRouter();
+  const { token } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
-    if (!user) {
-      router.push("/login");
+    if (!token) {
+      router.push("/login")
     }
-  }, [user, router]);
+  }, [token, router])
 
-  if (!user) return null; // or a loader
+  if (!token) return null
 
-  return <>{children}</>;
+  return <>{children}</>
 }

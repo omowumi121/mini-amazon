@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, ReactNode, useState, useContext } from "react";
+import { createContext, ReactNode, useState, useContext, useEffect } from "react";
 import { Product } from "@/types/product";
 
 interface CartItem extends Product {
@@ -20,7 +20,22 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | null>(null);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
+
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  // 🔥 Load cart from localStorage on first render
+  useEffect(() => {
+    const storedCart = localStorage.getItem("cart");
+
+    if (storedCart) {
+      setCartItems(JSON.parse(storedCart));
+    }
+  }, []);
+
+  // 🔥 Save cart whenever it changes
+  useEffect(() => {
+    localStorage.setItem("cart", JSON.stringify(cartItems));
+  }, [cartItems]);
 
   // ✅ Add to cart
   const addToCart = (product: Product) => {
@@ -48,7 +63,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const increaseQty = (id: string) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+        item.id === id
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
       )
     );
   };
@@ -66,12 +83,12 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  // ✅ Clear everything
+  // ✅ Clear cart
   const clearCart = () => {
     setCartItems([]);
   };
 
-  // ✅ Calculate total
+  // ✅ Total price
   const getTotalPrice = () => {
     return cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
@@ -96,11 +113,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// ✅ Safe hook
+// ✅ Custom hook
 export const useCart = () => {
   const context = useContext(CartContext);
+
   if (!context) {
     throw new Error("useCart must be used inside CartProvider");
   }
+
   return context;
 };

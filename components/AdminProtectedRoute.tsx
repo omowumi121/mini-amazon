@@ -1,4 +1,3 @@
-// components/AdminProtectedRoute.tsx
 "use client";
 
 import { ReactNode, useEffect } from "react";
@@ -6,16 +5,16 @@ import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function AdminProtectedRoute({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  const { token } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!user || !user.isAdmin) {
-      router.push("/login"); // redirect non-admins
+    if (!token) {
+      router.push("/login"); // redirect if not logged in
     }
-  }, [user, router]);
+  }, [token, router]);
 
-  if (!user || !user.isAdmin) return null; // render nothing until check passes
+  if (!token) return null;
 
   return <>{children}</>;
 }

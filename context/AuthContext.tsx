@@ -1,71 +1,48 @@
-"use client";
+"use client"
 
-import { createContext, useContext, ReactNode, useState, useEffect } from "react";
-import { loginUser } from "@/lib/auth";
-
-interface User {
-  email: string;
-  token: string;
-}
+import { createContext, useContext, useEffect, useState } from "react"
 
 interface AuthContextType {
-  user: User | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  token: string | null
+  login: (token: string) => void
+  logout: () => void
 }
 
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  loading: true,
-  login: async () => false,
-  logout: () => {},
-});
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [token, setToken] = useState<string | null>(null)
 
-  // Persist user on reload
   useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) {
-      setUser(JSON.parse(stored));
+    const storedToken = localStorage.getItem("token")
+    if (storedToken) {
+      setToken(storedToken)
     }
-    setLoading(false);
-  }, []);
+  }, [])
 
-  // Login function using Swagger
-  const login = async (email: string, password: string) => {
-    try {
-      const data = await loginUser(email.trim(), password.trim());
+  const login = (token: string) => {
+    localStorage.setItem("token", token)
+    setToken(token)
+  }
 
-      const loggedInUser: User = {
-        email,
-        token: data.token,
-      };
-
-      setUser(loggedInUser);
-      localStorage.setItem("user", JSON.stringify(loggedInUser));
-
-      return true;
-    } catch (err) {
-      console.error("Login failed:", err);
-      return false;
-    }
-  };
-
-  // Logout function
   const logout = () => {
-    setUser(null);
-    localStorage.removeItem("user");
-  };
+    localStorage.removeItem("token")
+    setToken(null)
+  }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ token, login, logout }}>
       {children}
     </AuthContext.Provider>
-  );
-};
+  )
+}
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext)
+
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider")
+  }
+
+  return context
+}

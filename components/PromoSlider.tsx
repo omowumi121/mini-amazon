@@ -13,13 +13,13 @@ type Promo = {
 
 const promos: Promo[] = [
   { title: "Exclusive Catalog Offers", img: "/promo1.png" },
-  { title: " Groceries", img: "/promo2.png" },
+  { title: "Groceries", img: "/promo2.png" },
   { title: "Send Packages Securely", img: "/promo3.png" },
   { title: "Buy 2 Pay for 1", img: "/promo4.png" },
   { title: "Deals of the Month", img: "/promo5.png" },
-  { title: "baby needs", img: "/promo6.png" },
+  { title: "Baby Needs", img: "/promo6.png" },
   { title: "Rechargeable Fan", img: "/promo7.png" },
-  { title: "Order package ", img: "/promo8.png" },
+  { title: "Order Package", img: "/promo8.png" },
   { title: "Up to 80% off", img: "/promo9.png" },
   { title: "Extra 10% Off", img: "/promo10.png" },
 ]
@@ -33,8 +33,21 @@ export default function PromoSlider() {
           modules={[Navigation]}
           navigation
           spaceBetween={15}
-          slidesPerView={6}
-          slidesPerGroup={4}
+
+          breakpoints={{
+            0: {
+              slidesPerView: 2,
+            },
+            640: {
+              slidesPerView: 3,
+            },
+            768: {
+              slidesPerView: 4,
+            },
+            1024: {
+              slidesPerView: 6,
+            },
+          }}
         >
           {promos.map((promo, index) => (
             <SwiperSlide key={index}>
@@ -53,6 +66,7 @@ export default function PromoSlider() {
               </div>
             </SwiperSlide>
           ))}
+
         </Swiper>
 
       </div>

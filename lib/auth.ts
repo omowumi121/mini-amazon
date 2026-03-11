@@ -1,13 +1,34 @@
-import { request } from "./api";
+import api from "./api"
 
-// Registration: POST /register
-export async function registerUser(name: string, email: string, password: string) {
-  // Swagger says request body: { name, email, password }
-  return request<{ message: string }>("/register", "POST", { name, email, password });
+export interface RegisterPayload {
+  name: string
+  email: string
+  password: string
 }
 
-// Login: POST /login
-export async function loginUser(email: string, password: string) {
-  // Swagger says response: { message: string, token: string }
-  return request<{ message: string; token: string }>("/login", "POST", { email, password });
+export interface LoginPayload {
+  email: string
+  password: string
+}
+
+export interface LoginResponse {
+  message: string
+  token: string
+}
+
+export const registerUser = async (data: RegisterPayload) => {
+  const res = await api.post("/register", data)
+  return res.data
+}
+
+export const loginUser = async (
+  data: LoginPayload
+): Promise<LoginResponse> => {
+  const res = await api.post("/login", data)
+
+  return res.data
+}
+
+export const logoutUser = () => {
+  localStorage.removeItem("token")
 }

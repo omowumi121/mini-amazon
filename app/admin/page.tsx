@@ -1,28 +1,25 @@
-"use client";
+"use client"
 
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/context/AuthContext"
 
 export default function AdminPage() {
-  const { user } = useAuth();
-  const router = useRouter();
+  const { token } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
-    if (!user || !user.isAdmin) {
-      router.push("/");
+    if (!token) {
+      router.push("/login")
     }
-  }, [user, router]);
+  }, [token, router])
 
-  // Optional: prevent flash before redirect
-  if (!user || !user.isAdmin) {
-    return null;
-  }
+  if (!token) return null
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
-      <p>Welcome Admin 👑</p>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
+      <p>Welcome to the admin panel.</p>
     </div>
-  );
+  )
 }

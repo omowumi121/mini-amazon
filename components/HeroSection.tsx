@@ -3,13 +3,13 @@ import HeroCarousel from "./HeroCarousel";
 
 export default function HeroSection() {
   return (
-    <section className="bg-gray-100 py-6 -my-8 -mx-12">
+    <section className="bg-gray-100 py-6 -my-8 -mx-4 md:-mx-8">
       <div className="max-w-7xl mx-auto px-4">
 
-        <div className="grid grid-cols-12 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
 
           {/* LEFT CATEGORY MENU */}
-          <div className="col-span-3 bg-white rounded-lg shadow p-3">
+          <div className="hidden lg:block lg:col-span-3 bg-white rounded-lg shadow p-3">
             <ul className="space-y-2 text-sm">
               <li className="hover:text-orange-500 cursor-pointer">Appliances</li>
               <li className="hover:text-orange-500 cursor-pointer">Phones & Tablets</li>
@@ -27,12 +27,12 @@ export default function HeroSection() {
           </div>
 
           {/* CENTER CAROUSEL */}
-          <div className="col-span-7 bg-white rounded-lg overflow-hidden shadow">
+          <div className="col-span-1 lg:col-span-7 bg-white rounded-lg overflow-hidden shadow">
             <HeroCarousel />
           </div>
 
           {/* RIGHT SIDEBAR */}
-          <div className="col-span-2 flex flex-col gap-4">
+          <div className="hidden lg:flex lg:col-span-2 flex-col gap-4">
 
             <div className="bg-white rounded-lg shadow p-3 space-y-3">
 
@@ -60,7 +60,7 @@ export default function HeroSection() {
             </div>
 
             <div className="bg-orange-500 h-[150px] rounded-lg flex items-center justify-center text-white font-bold text-lg">
-                BESTY'S STORE
+              BESTY'S STORE
             </div>
 
           </div>
