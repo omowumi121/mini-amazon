@@ -3,7 +3,7 @@ import HeroCarousel from "./HeroCarousel";
 
 export default function HeroSection() {
   return (
-    <section className="bg-gray-100 py-6 -my-8 -mx-4 md:-mx-8">
+    <section className="bg-transparent md:bg-gray-100 py-6 -my-8 -mx-4 md:-mx-8">
       <div className="max-w-7xl mx-auto px-4">
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -27,7 +27,7 @@ export default function HeroSection() {
           </div>
 
           {/* CENTER CAROUSEL */}
-          <div className="col-span-1 lg:col-span-7 bg-white rounded-lg overflow-hidden shadow">
+          <div className="col-span-1 lg:col-span-7 bg-transparent md:bg-white rounded-lg overflow-hidden md:shadow">
             <HeroCarousel />
           </div>
 
@@ -46,7 +46,7 @@ export default function HeroSection() {
               <div className="flex items-center gap-2">
                 <Home size={18} className="text-orange-500" />
                 <span className="text-xs font-medium">
-                  Sell on Jumia
+                  Sell on Besty's
                 </span>
               </div>
 

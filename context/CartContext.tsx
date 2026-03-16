@@ -1,18 +1,21 @@
 "use client";
 
 import { createContext, ReactNode, useState, useContext, useEffect } from "react";
-import { Product } from "@/types/product";
+// ✅ IMPORT the central Product type from your API file
+import { Product } from "@/lib/api"; 
 
-interface CartItem extends Product {
+// ✅ CartItem correctly extends the global API Product type
+export interface CartItem extends Product {
   quantity: number;
 }
 
 interface CartContextType {
   cartItems: CartItem[];
   addToCart: (product: Product) => void;
-  removeFromCart: (id: string) => void;
-  increaseQty: (id: string) => void;
-  decreaseQty: (id: string) => void;
+  // ✅ Using string | number to match the ID type in lib/api.ts
+  removeFromCart: (id: string | number) => void;
+  increaseQty: (id: string | number) => void;
+  decreaseQty: (id: string | number) => void;
   clearCart: () => void;
   getTotalPrice: () => number;
 }
@@ -20,24 +23,25 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | null>(null);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // 🔥 Load cart from localStorage on first render
+  // Load cart from localStorage on mount
   useEffect(() => {
     const storedCart = localStorage.getItem("cart");
-
     if (storedCart) {
-      setCartItems(JSON.parse(storedCart));
+      try {
+        setCartItems(JSON.parse(storedCart));
+      } catch (e) {
+        console.error("Failed to parse cart", e);
+      }
     }
   }, []);
 
-  // 🔥 Save cart whenever it changes
+  // Sync cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // ✅ Add to cart
   const addToCart = (product: Product) => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id);
@@ -54,13 +58,11 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  // ✅ Remove completely
-  const removeFromCart = (id: string) => {
+  const removeFromCart = (id: string | number) => {
     setCartItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  // ✅ Increase quantity
-  const increaseQty = (id: string) => {
+  const increaseQty = (id: string | number) => {
     setCartItems((prev) =>
       prev.map((item) =>
         item.id === id
@@ -70,8 +72,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  // ✅ Decrease quantity
-  const decreaseQty = (id: string) => {
+  const decreaseQty = (id: string | number) => {
     setCartItems((prev) =>
       prev
         .map((item) =>
@@ -83,12 +84,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     );
   };
 
-  // ✅ Clear cart
   const clearCart = () => {
     setCartItems([]);
   };
 
-  // ✅ Total price
   const getTotalPrice = () => {
     return cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
@@ -113,13 +112,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   );
 };
 
-// ✅ Custom hook
 export const useCart = () => {
   const context = useContext(CartContext);
-
   if (!context) {
     throw new Error("useCart must be used inside CartProvider");
   }
-
   return context;
 };
