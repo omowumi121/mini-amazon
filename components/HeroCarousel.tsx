@@ -16,23 +16,32 @@ export default function HeroCarousel() {
   return (
     <Swiper
       modules={[Autoplay, Pagination]}
-      pagination={{ clickable: true }}
-      autoplay={{ delay: 4000 }}
+      pagination={{ 
+        clickable: true,
+        dynamicBullets: true 
+      }}
+      autoplay={{ 
+        delay: 5000, 
+        disableOnInteraction: false 
+      }}
       loop
-      className="w-full rounded-xl overflow-hidden"
+      className="w-full h-full"
     >
       {slides.map((src, i) => (
         <SwiperSlide key={i}>
-          <div className="relative w-full h-[300px] md:h-[350px]">
-
+          {/* Responsive container heights */}
+          <div className="relative w-full h-[200px] sm:h-[300px] lg:h-[400px]">
             <Image
               src={src}
               alt={`Banner ${i + 1}`}
               fill
+              // Performance Optimization:
+              priority={i === 0} // Highest priority for the first slide
+              loading={i === 0 ? "eager" : "lazy"} // Force immediate download for slide 1
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 70vw, 800px"
               className="object-cover"
-              priority={i === 0}
+              quality={90} // Balance between high quality and fast loading
             />
-
           </div>
         </SwiperSlide>
       ))}

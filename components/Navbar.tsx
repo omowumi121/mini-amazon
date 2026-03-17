@@ -1,167 +1,3 @@
-// "use client";
-
-// import { useState, useEffect } from "react";
-// import Link from "next/link";
-// import { useRouter } from "next/navigation";
-// import { useCart } from "@/context/CartContext";
-// import { useAuth } from "@/context/AuthContext";
-// import { FaShoppingCart, FaBars, FaTimes, FaSearch } from "react-icons/fa";
-
-// export default function Navbar() {
-//   const { cartItems } = useCart();
-//   const { token, loading, logout } = useAuth(); // Destructured 'loading'
-//   const router = useRouter();
-
-//   const [isOpen, setIsOpen] = useState(false);
-//   const [search, setSearch] = useState("");
-//   const [mounted, setMounted] = useState(false);
-
-//   useEffect(() => {
-//     setMounted(true);
-//   }, []);
-
-//   const handleLogout = () => {
-//     logout();
-//     setIsOpen(false);
-//     router.push("/login");
-//   };
-
-//   const closeMenu = () => setIsOpen(false);
-
-//   const handleSearch = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (!search.trim()) return;
-//     router.push(`/products?search=${search}`);
-//     setSearch("");
-//     setIsOpen(false);
-//   };
-
-//   // Prevent server-side rendering mismatch
-//   if (!mounted) return <nav className="h-16 bg-white shadow-md sticky top-0 z-50" />;
-
-//   return (
-//     <nav className="bg-white text-black shadow-md sticky top-0 z-50">
-//       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//         <div className="flex justify-between items-center py-4">
-          
-//           {/* Logo */}
-//           <Link href="/" onClick={closeMenu} className="text-2xl font-bold text-orange-500 italic">
-//             Besty'<span className="font-semibold text-amber-300">s</span>
-//           </Link>
-
-//           {/* Desktop Search */}
-//           <form onSubmit={handleSearch} className="hidden md:flex items-center bg-white border border-gray-300 rounded-md overflow-hidden w-2/5 shadow-sm">
-//             <input
-//               type="text"
-//               placeholder="Search products, brands and categories"
-//               value={search}
-//               onChange={(e) => setSearch(e.target.value)}
-//               className="flex-1 px-4 py-2 text-gray-800 placeholder-gray-500 focus:outline-none"
-//             />
-//             <button type="submit" className="bg-orange-500 px-5 py-2 text-white hover:bg-orange-600">
-//               <FaSearch />
-//             </button>
-//           </form>
-
-//           {/* Desktop Menu */}
-//           <div className="hidden md:flex items-center gap-6">
-//             <Link href="/products" className="hover:text-orange-400">Products</Link>
-
-//             {/* Auth Check with Loading Guard */}
-//             {!loading && (
-//               token ? (
-//                 <>
-//                   <button onClick={handleLogout} className="text-sm text-black hover:underline">
-//                     Logout
-//                   </button>
-//                   <Link href="/admin" className="bg-black text-white px-3 py-1 rounded hover:text-orange-300 transition-colors">
-//                     Admin
-//                   </Link>
-//                 </>
-//               ) : (
-//                 <>
-//                   <Link href="/login" className="hover:text-orange-400">Login</Link>
-//                   <Link href="/register" className="bg-orange-400 px-3 py-1 rounded hover:bg-orange-600 text-white transition-colors">
-//                     Register
-//                   </Link>
-//                 </>
-//               )
-//             )}
-
-//             {/* Cart */}
-//             <Link href="/cart" className="relative flex items-center gap-2 hover:text-orange-400">
-//               <FaShoppingCart size={18} />
-//               <span className="font-medium">Cart</span>
-//               {cartItems.length > 0 && (
-//                 <span className="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">
-//                   {cartItems.length}
-//                 </span>
-//               )}
-//             </Link>
-//           </div>
-
-//           {/* Mobile Menu Button */}
-//           <button className="md:hidden p-2 text-gray-600" onClick={() => setIsOpen(!isOpen)}>
-//             {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-//           </button>
-//         </div>
-
-//         {/* Mobile Menu Content */}
-//         {isOpen && (
-//           <div className="md:hidden flex flex-col gap-4 pb-6 border-t border-gray-100 pt-4 animate-in slide-in-from-top duration-300">
-//             <form onSubmit={handleSearch} className="flex bg-white border border-gray-300 rounded-md overflow-hidden">
-//               <input
-//                 type="text"
-//                 placeholder="Search products..."
-//                 value={search}
-//                 onChange={(e) => setSearch(e.target.value)}
-//                 className="flex-1 px-3 py-2 text-gray-800 focus:outline-none"
-//               />
-//               <button type="submit" className="bg-orange-500 px-4 py-2 text-white">
-//                 <FaSearch />
-//               </button>
-//             </form>
-
-//             <Link href="/products" onClick={closeMenu} className="text-lg font-medium hover:text-orange-500">
-//               Products
-//             </Link>
-
-//             {!loading && (
-//               token ? (
-//                 <>
-//                   <Link href="/admin" onClick={closeMenu} className="bg-black text-white px-3 py-2 rounded text-center">
-//                     Admin Dashboard
-//                   </Link>
-//                   <button onClick={handleLogout} className="text-red-500 text-left font-medium">
-//                     Logout
-//                   </button>
-//                 </>
-//               ) : (
-//                 <>
-//                   <Link href="/login" onClick={closeMenu} className="text-lg font-medium hover:text-orange-500">
-//                     Login
-//                   </Link>
-//                   <Link href="/register" onClick={closeMenu} className="bg-orange-500 text-white px-3 py-2 rounded text-center font-bold">
-//                     Register
-//                   </Link>
-//                 </>
-//               )
-//             )}
-
-//             <Link href="/cart" onClick={closeMenu} className="flex items-center justify-center bg-orange-100 hover:bg-orange-200 gap-2 px-3 py-3 rounded text-orange-700 font-bold">
-//               <FaShoppingCart />
-//               Cart ({cartItems.length})
-//             </Link>
-//           </div>
-//         )}
-//       </div>
-//     </nav>
-//   );
-// }
-
-
-
-
 "use client";
 
 import { useState, useEffect } from "react";
@@ -169,11 +5,10 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
-import { FaShoppingCart, FaBars, FaTimes, FaSearch, FaBox } from "react-icons/fa";
+import { FaShoppingCart, FaBars, FaTimes, FaSearch, FaBox, FaUser } from "react-icons/fa";
 
 export default function Navbar() {
   const { cartItems } = useCart();
-  // ✅ Destructured 'user' to access is_admin status
   const { token, loading, logout, user } = useAuth(); 
   const router = useRouter();
 
@@ -191,8 +26,6 @@ export default function Navbar() {
     router.push("/login");
   };
 
-  const closeMenu = () => setIsOpen(false);
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (!search.trim()) return;
@@ -201,140 +34,135 @@ export default function Navbar() {
     setIsOpen(false);
   };
 
-  if (!mounted) return <nav className="h-16 bg-white shadow-md sticky top-0 z-50" />;
+  if (!mounted) return <nav className="h-16 bg-[#131921] sticky top-0 z-50" />;
 
   return (
-    <nav className="bg-white text-black shadow-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center py-4">
+    <nav className="bg-[#131921] text-white sticky top-0 z-50 shadow-md">
+      <div className="max-w-7xl mx-auto px-4 lg:px-6">
+        <div className="flex items-center justify-between h-16 gap-4 md:gap-8">
           
-          {/* Logo */}
-          <Link href="/" onClick={closeMenu} className="text-2xl font-bold text-orange-500 italic">
-            Besty'<span className="font-semibold text-amber-300">s</span>
+          {/* Logo: Clickable and Redirects to Home */}
+          <Link 
+            href="/" 
+            onClick={() => setIsOpen(false)} 
+            className="flex items-center flex-shrink-0 cursor-pointer group py-1 border border-transparent hover:border-white px-2 rounded-sm transition-all"
+          >
+            <span className="text-xl md:text-2xl font-black tracking-tighter text-white">
+              BESTY'S<span className="text-[#febd69]">.</span>
+            </span>
           </Link>
 
-          {/* Desktop Search */}
-          <form onSubmit={handleSearch} className="hidden md:flex items-center bg-white border border-gray-300 rounded-md overflow-hidden w-2/5 shadow-sm">
+          {/* SYSTEM/TABLET SEARCH */}
+          <form onSubmit={handleSearch} className="hidden md:flex flex-1 items-center max-w-3xl h-10 bg-white rounded-md overflow-hidden ring-offset-2 focus-within:ring-2 focus-within:ring-[#febd69]">
             <input
               type="text"
-              placeholder="Search products, brands and categories"
+              placeholder="Search Besty's..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 px-4 py-2 text-gray-800 placeholder-gray-500 focus:outline-none"
+              className="flex-1 h-full px-4 text-gray-900 placeholder-gray-500 outline-none text-sm"
             />
-            <button type="submit" className="bg-orange-500 px-5 py-2 text-white hover:bg-orange-600">
-              <FaSearch />
+            <button type="submit" className="bg-[#febd69] hover:bg-[#f3a847] h-full px-5 text-[#131921] transition-colors">
+              <FaSearch size={18} />
             </button>
           </form>
 
-          {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-6">
-            <Link href="/products" className="hover:text-orange-400">Products</Link>
-
+          {/* Desktop Menu Actions */}
+          <div className="hidden md:flex items-center gap-6 text-sm">
             {!loading && (
               token ? (
-                <>
-                  {/* ✅ New link to the Orders page */}
-                  <Link href="/order" className="hover:text-orange-400 flex items-center gap-1">
-                    <FaBox size={14} /> My Orders
-                  </Link>
-
-                  <button onClick={handleLogout} className="text-sm text-black hover:underline">
-                    Logout
-                  </button>
-
-                  {/* ✅ THE FIX: Only show Admin if user exists and is_admin is true */}
-                  {user?.is_admin && (
-                    <Link href="/admin" className="bg-black text-white px-3 py-1 rounded hover:text-orange-300 transition-colors">
-                      Admin
-                    </Link>
-                  )}
-                </>
+                <div className="flex flex-col group cursor-pointer relative py-1">
+                  <span className="text-[11px] text-gray-300 leading-tight">Hello, {user?.name || 'User'}</span>
+                  <div className="flex items-center gap-1 font-bold">
+                    <span>Account & Lists</span>
+                    <div className="hidden group-hover:block absolute top-full right-0 w-48 bg-white text-gray-900 shadow-xl rounded-sm p-4 mt-1 border border-gray-200 z-[60]">
+                        {user?.is_admin && (
+                           <Link href="/admin" className="block py-2 hover:text-orange-600 font-bold border-b border-gray-100">Admin Panel</Link>
+                        )}
+                        <Link href="/order" className="block py-2 hover:text-orange-600">My Orders</Link>
+                        <button onClick={handleLogout} className="block w-full text-left py-2 hover:text-orange-600 text-red-600">Sign Out</button>
+                    </div>
+                  </div>
+                </div>
               ) : (
-                <>
-                  <Link href="/login" className="hover:text-orange-400">Login</Link>
-                  <Link href="/register" className="bg-orange-400 px-3 py-1 rounded hover:bg-orange-600 text-white transition-colors">
-                    Register
-                  </Link>
-                </>
+                <Link href="/login" className="flex flex-col border border-transparent hover:border-white px-2 py-1 rounded-sm">
+                  <span className="text-[11px] text-gray-300">Hello, sign in</span>
+                  <span className="font-bold">Account</span>
+                </Link>
               )
             )}
 
-            {/* Cart */}
-            <Link href="/cart" className="relative flex items-center gap-2 hover:text-orange-400">
-              <FaShoppingCart size={18} />
-              <span className="font-medium">Cart</span>
-              {cartItems.length > 0 && (
-                <span className="absolute -top-2 -right-3 bg-red-500 text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">
+            <Link href="/order" className="flex flex-col border border-transparent hover:border-white px-2 py-1 rounded-sm">
+               <span className="text-[11px] text-gray-300">Returns</span>
+               <span className="font-bold">& Orders</span>
+            </Link>
+
+            <Link href="/cart" className="relative flex items-end gap-1 hover:text-[#febd69] group transition-colors border border-transparent hover:border-white px-2 py-1 rounded-sm">
+              <div className="relative">
+                <FaShoppingCart size={24} className="text-white group-hover:text-[#febd69]" />
+                <span className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#131921] text-[#febd69] text-xs font-bold px-1 min-w-[20px] text-center">
                   {cartItems.length}
                 </span>
-              )}
+              </div>
+              <span className="font-bold hidden lg:inline">Cart</span>
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button className="md:hidden p-2 text-gray-600" onClick={() => setIsOpen(!isOpen)}>
-            {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
-          </button>
+          {/* Mobile UI Buttons */}
+          <div className="flex md:hidden items-center gap-4">
+            <Link href="/cart" className="relative">
+               <FaShoppingCart size={22} />
+               <span className="absolute -top-2 -right-2 bg-orange-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                 {cartItems.length}
+               </span>
+            </Link>
+            <button onClick={() => setIsOpen(!isOpen)} className="p-1">
+              {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
+            </button>
+          </div>
         </div>
 
-        {/* Mobile Menu Content */}
-        {isOpen && (
-          <div className="md:hidden flex flex-col gap-4 pb-6 border-t border-gray-100 pt-4 animate-in slide-in-from-top duration-300">
-            <form onSubmit={handleSearch} className="flex bg-white border border-gray-300 rounded-md overflow-hidden">
-              <input
-                type="text"
-                placeholder="Search products..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="flex-1 px-3 py-2 text-gray-800 focus:outline-none"
-              />
-              <button type="submit" className="bg-orange-500 px-4 py-2 text-white">
-                <FaSearch />
-              </button>
-            </form>
-
-            <Link href="/products" onClick={closeMenu} className="text-lg font-medium hover:text-orange-500">
-              Products
-            </Link>
-
-            {!loading && (
-              token ? (
-                <>
-                  <Link href="/order" onClick={closeMenu} className="text-lg font-medium hover:text-orange-500">
-                    My Orders
-                  </Link>
-                  
-                  {/* ✅ THE FIX: Admin check for Mobile menu */}
-                  {user?.is_admin && (
-                    <Link href="/admin" onClick={closeMenu} className="bg-black text-white px-3 py-2 rounded text-center">
-                      Admin Dashboard
-                    </Link>
-                  )}
-                  
-                  <button onClick={handleLogout} className="text-red-500 text-left font-medium">
-                    Logout
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link href="/login" onClick={closeMenu} className="text-lg font-medium hover:text-orange-500">
-                    Login
-                  </Link>
-                  <Link href="/register" onClick={closeMenu} className="bg-orange-500 text-white px-3 py-2 rounded text-center font-bold">
-                    Register
-                  </Link>
-                </>
-              )
-            )}
-
-            <Link href="/cart" onClick={closeMenu} className="flex items-center justify-center bg-orange-100 hover:bg-orange-200 gap-2 px-3 py-3 rounded text-orange-700 font-bold">
-              <FaShoppingCart />
-              Cart ({cartItems.length})
-            </Link>
-          </div>
-        )}
+        {/* MOBILE SEARCH */}
+        <div className="md:hidden pb-4">
+          <form onSubmit={handleSearch} className="flex h-10 bg-white rounded-md overflow-hidden">
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 px-4 text-gray-900 outline-none text-sm"
+            />
+            <button type="submit" className="bg-[#febd69] px-4 text-[#131921]">
+              <FaSearch size={18} />
+            </button>
+          </form>
+        </div>
       </div>
+
+      {/* MOBILE DRAWER */}
+      {isOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 md:hidden" onClick={() => setIsOpen(false)}>
+          <div className="w-[80%] max-w-[300px] h-full bg-white flex flex-col animate-in slide-in-from-left duration-300" onClick={e => e.stopPropagation()}>
+             <div className="bg-[#232f3e] p-4 flex items-center gap-3 text-white">
+                <FaUser size={20} />
+                <span className="font-bold text-lg">Hello, {user?.name || 'Sign In'}</span>
+             </div>
+             
+             <div className="flex flex-col text-gray-900">
+               <Link href="/" onClick={() => setIsOpen(false)} className="p-4 border-b hover:bg-gray-50 font-medium">Home</Link>
+               <Link href="/products" onClick={() => setIsOpen(false)} className="p-4 border-b hover:bg-gray-50 font-medium">All Products</Link>
+               <Link href="/order" onClick={() => setIsOpen(false)} className="p-4 border-b hover:bg-gray-50 font-medium">My Orders</Link>
+               {user?.is_admin && (
+                 <Link href="/admin" onClick={() => setIsOpen(false)} className="p-4 border-b bg-orange-50 font-bold text-orange-700">Admin Dashboard</Link>
+               )}
+               {!token ? (
+                  <Link href="/login" onClick={() => setIsOpen(false)} className="p-4 border-b hover:bg-gray-50 font-medium">Sign In</Link>
+               ) : (
+                  <button onClick={handleLogout} className="p-4 text-left text-red-600 font-bold">Sign Out</button>
+               )}
+             </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
